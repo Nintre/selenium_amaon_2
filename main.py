@@ -58,7 +58,7 @@ def process_one(in_queue):
             Select(driver.find_element_by_id('searchDropdownBox')).select_by_visible_text('All Departments')
 
         keywords = in_queue.get()
-        print(keywords)
+        # print(keywords)
         control.search_keywords(driver, keywords)
 
         parse_product.get_product_list(driver, keywords)

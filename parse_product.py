@@ -109,7 +109,7 @@ def get_product_list(driver, keywords):
             rank += 1
         else:
             item['rank'] = 0
-        print(item)
+        # print(item)
 
         # 存入5050 mysql下的parse_product表
         # save_mysql.save_data(item)
