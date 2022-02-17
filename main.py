@@ -5,7 +5,11 @@ import time
 
 from selenium.webdriver.support.select import Select
 
-import parse_product, control, setting, get_search_item
+import control
+import get_search_item
+import parse_product
+import setting
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 url = setting.BASE_URL
@@ -32,7 +36,7 @@ def main():
         for keyword in data_list:
             queue.put(keyword)
 
-        print('queue 开始大小 %d' % queue.qsize())
+        # print('queue 开始大小 %d' % queue.qsize())
 
         # 异步进程池(非阻塞)
         pool = multiprocessing.Pool(pool_size)

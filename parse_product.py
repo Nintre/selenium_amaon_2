@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import sys
@@ -101,6 +102,8 @@ def get_product_list(driver, keywords):
     rank = 1
     for i in range(len(asin_list)):
         item = get_dict_item(keywords, asin_list[i], driver)
+        time = str(datetime.datetime.now()).split('.')[0]
+        item['snapshot_date'] = time
         if item['sponsored'] == '':
             item['rank'] = rank
             rank += 1
