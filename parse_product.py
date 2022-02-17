@@ -120,7 +120,7 @@ def get_product_list(driver, keywords):
 
 def get_dict_item(keywords, asin, driver):
     item = {}
-    item['keywords'] = keywords
+    item['keywords'] = escape_string(keywords)
     item['asin'] = asin
 
     title = parse_title(driver, asin)
