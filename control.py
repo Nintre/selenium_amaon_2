@@ -18,7 +18,7 @@ def get_driver():
         chrome_options.add_argument("disable-web-security")
         chrome_options.add_argument('disable-infobars')
 
-        chrome_options.headless = True
+        chrome_options.headless = setting.HEADLESS
 
         chrome_options.add_argument(
             'User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"')
@@ -38,11 +38,16 @@ def change_address(driver, postal):
     while True:
         try:
             driver.find_element_by_id('glow-ingress-line1').click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             print("click配送至出错:", e)
             driver.refresh()
             continue
+        try:
+            driver.find_element_by_id("GLUXChangePostalCodeLink").click()
+            time.sleep(2)
+        except:
+            pass
         try:
             driver.find_element_by_id('GLUXZipUpdateInput').send_keys(postal)
             break
@@ -54,10 +59,12 @@ def change_address(driver, postal):
                 time.sleep(1)
                 break
             except Exception as NoSuchElementException:
+                print('NoSuchElementException err:', NoSuchElementException)
                 driver.refresh()
                 time.sleep(1)
                 continue
     driver.find_element_by_id('GLUXZipUpdate').click()
+    time.sleep(1)
     driver.refresh()
 
 

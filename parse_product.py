@@ -1,7 +1,7 @@
 import os
 import re
 import sys
-
+from pymysql.converters import escape_string
 import save_mysql
 import save_clickhouse
 
@@ -56,13 +56,18 @@ def parse_ratings(driver, asin):
 
 
 def parse_price(driver, asin):
-    price = ''
+    price = 0
+    currency = ''
     try:
-        price = driver.find_element_by_xpath('//div[@data-asin="{}"]//div[@class="a-row a-size-base a-color-base"]//span[@class="a-offscreen"]'.format(asin)).get_attribute('textContent')
+        price_origin = driver.find_element_by_xpath('//div[@data-asin="{}"]//div[@class="a-row a-size-base a-color-base"]//span[@class="a-offscreen"]'.format(asin)).get_attribute('textContent')
+        # price_origin = '$4.34'
+        currency = re.findall('[^0-9.-]', price_origin)[0]
+        price = price_origin.replace(currency, '')
+        price = float(price)
     except Exception as e:
         # print("parse_price err:", e)
         pass
-    return price
+    return price, currency
 
 
 def parse_sponsored(driver, asin):
@@ -93,16 +98,21 @@ def get_product_list(driver, keywords):
             asin_list.append(asin)
     # print(asin_list)
     # print(len(asin_list))
-
-    for asin in asin_list:
-        item = get_dict_item(keywords, asin, driver)
-        # print(item)
+    rank = 1
+    for i in range(len(asin_list)):
+        item = get_dict_item(keywords, asin_list[i], driver)
+        if item['sponsored'] == '':
+            item['rank'] = rank
+            rank += 1
+        else:
+            item['rank'] = 0
+        print(item)
 
         # 存入5050 mysql下的parse_product表
-        save_mysql.save_data(item)
+        # save_mysql.save_data(item)
 
         # 存入clickhouse
-        # save_clickhouse.save_clickhouse(item)
+        save_clickhouse.save_clickhouse(item)
 
 
 def get_dict_item(keywords, asin, driver):
@@ -111,10 +121,10 @@ def get_dict_item(keywords, asin, driver):
     item['asin'] = asin
 
     title = parse_title(driver, asin)
-    item['title'] = title
+    item['title'] = escape_string(title)
 
     image = parse_image(driver, asin)
-    item['image'] = image
+    item['image'] = escape_string(image)
 
     stars = parse_stars(driver, asin)
     item['stars'] = stars
@@ -122,14 +132,15 @@ def get_dict_item(keywords, asin, driver):
     ratings = parse_ratings(driver, asin)
     item['ratings'] = ratings
 
-    price = parse_price(driver, asin)
+    price, currency = parse_price(driver, asin)
     item['price'] = price
+    item['currency'] = currency
 
     sponsored = parse_sponsored(driver, asin)
     item['sponsored'] = sponsored
 
     best_seller_in = parse_best_seller_in(driver, asin)
-    item['best_seller_in'] = best_seller_in
+    item['best_seller_in'] = escape_string(best_seller_in)
     return item
 
 

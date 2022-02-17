@@ -14,7 +14,7 @@ batch_size = setting.KEYWORDS_LIST_SIZE
 pool_size = setting.PROCESS_POOL_SIZE
 
 # 15
-# keywords_list = ['phone', 'book', 'computer', 'tree', 'cat', 'dog', 'food', 'basketball', 'fishing', 'golf', 'hunting', 'gift',
+# data_list = ['phone', 'book', 'computer', 'tree', 'cat', 'dog', 'food', 'basketball', 'fishing', 'golf', 'hunting', 'gift',
 #                  'bag', 'football', 'ping pang']
 
 
@@ -25,14 +25,14 @@ def main():
         if len(data_list) == 0:
             print("爬取结束")
             break
-        # print('大小为{},值为{}'.format(len(data_list), data_list))
+        print('大小为{},值为{}'.format(len(data_list), data_list))
         n += batch_size
 
         queue = multiprocessing.Manager().Queue()
         for keyword in data_list:
             queue.put(keyword)
 
-        # print('queue 开始大小 %d' % queue.qsize())
+        print('queue 开始大小 %d' % queue.qsize())
 
         # 异步进程池(非阻塞)
         pool = multiprocessing.Pool(pool_size)

@@ -13,8 +13,8 @@ def save_clickhouse(item):
         # 取出keys为字段
         item_keys = ', '.join('`{}`'.format(k) for k in item.keys())
         # 取出values为插入的值
-        item_values = ', '.join('"{}"'.format(k) for k in item.values())
-        product_sql = "insert into `parse_product`({}) values({})".format(item_keys, item_values)
+        item_values = ', '.join("'{}'".format(k) for k in item.values())
+        product_sql = "insert into `selenium_amazon_product_rank` ({}) values({})".format(item_keys, item_values)
 
         client.execute(product_sql)
     except Exception as e:
