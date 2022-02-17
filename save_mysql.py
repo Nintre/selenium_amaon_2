@@ -7,9 +7,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def save_data(item):
-    db = pymysql.connect(host=setting.HOSTNAME, user=setting.USERNAME, password=setting.PASSWORD,
-                         database=setting.DATABASE,
-                         charset='utf8mb4', port=setting.PORT)
+    db = pymysql.connect(host=setting.MYSQL['HOSTNAME'], user=setting.MYSQL['USERNAME'],
+                         password=setting.MYSQL['PASSWORD'],
+                         database=setting.MYSQL['DATABASE'],
+                         charset='utf8mb4', port=setting.MYSQL['PORT'])
     try:
         cursor = db.cursor()
         # 删除为空和为0的键值对

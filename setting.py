@@ -1,16 +1,27 @@
 # 本地数据库
-HOSTNAME = '127.0.0.1'
-PORT = 3306
-DATABASE = 'mysql'
-USERNAME = "root"
-PASSWORD = "hu306415"
+MYSQL = {
+    'HOSTNAME': '127.0.0.1',
+    'PORT': 3306,
+    'DATABASE': 'mysql',
+    'USERNAME': "root",
+    'PASSWORD': "hu306415"
+}
 
 # 5050数据库
-# HOSTNAME = '192.168.50.50'
-# PORT = 23306
-# DATABASE = 'mysql'
-# USERNAME = "root"
-# PASSWORD = "root@123"
+# MYSQL = {
+#     'HOSTNAME': '192.168.50.50',
+#     'PORT': 23306,
+#     'DATABASE': 'mysql',
+#     'USERNAME': 'root',
+#     'PASSWORD': 'root@123'
+# }
+
+CLICKHOUSE = {
+    'HOSTNAME': '192.168.50.50',
+    'DATABASE': 'test',
+    'USERNAME': 'default',
+    'PASSWORD': ''
+}
 
 # 进程池的大小
 PROCESS_POOL_SIZE = 1
@@ -35,4 +46,3 @@ HEADLESS = True
 # 2.同时改变如果无sponsored默认是null而不是''字符串，同样的是price，best_seller_in
 # 3.添加上传至github
 # 4.添加rank以及将price和currency分开
-
