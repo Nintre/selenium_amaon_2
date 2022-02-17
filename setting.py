@@ -24,10 +24,10 @@ CLICKHOUSE = {
 }
 
 # 进程池的大小
-PROCESS_POOL_SIZE = 1
+PROCESS_POOL_SIZE = 8
 
 # 一次处理的keywords大小
-KEYWORDS_LIST_SIZE = 6
+KEYWORDS_LIST_SIZE = 240
 
 # 开始的url地址
 BASE_URL = 'https://www.amazon.com'
@@ -35,8 +35,11 @@ BASE_URL = 'https://www.amazon.com'
 # 邮编
 POSTAL = "10001"
 
-# webdriver.Chrome的地址
-CHROME_WEBDRIVER_PATH = '/users/hutaiyi/downloads/chromedriver'
+# 本地webdriver.Chrome的地址
+# CHROME_WEBDRIVER_PATH = '/users/hutaiyi/downloads/chromedriver'
+
+# 服务器webdriver.Chrome的地址
+CHROME_WEBDRIVER_PATH = '/home/usea/pa_amzon/chromedriver_linux'
 
 # chrome是否无头
 HEADLESS = True
