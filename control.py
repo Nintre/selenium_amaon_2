@@ -40,7 +40,7 @@ def change_address(driver, postal):
             driver.find_element_by_id('glow-ingress-line1').click()
             time.sleep(1)
         except Exception as e:
-            print("click配送至出错:", e)
+            print("click配送至出错! or验证码界面!")
             driver.refresh()
             continue
         try:

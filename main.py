@@ -25,48 +25,55 @@ pool_size = setting.PROCESS_POOL_SIZE
 def main():
     n = 0
     while True:
-        data_list = get_search_item.get_keywords(batch_size, n)
-        if len(data_list) == 0:
-            print("爬取结束")
-            break
-        print('大小为{},值为{}'.format(len(data_list), data_list))
-        n += batch_size
+        try:
+            data_list = get_search_item.get_keywords(batch_size, n)
+            if len(data_list) == 0:
+                print("爬取结束")
+                break
+            print('大小为{},值为{}'.format(len(data_list), data_list))
+            n += batch_size
 
-        queue = multiprocessing.Manager().Queue()
-        for keyword in data_list:
-            queue.put(keyword)
+            queue = multiprocessing.Manager().Queue()
+            for keyword in data_list:
+                queue.put(keyword)
 
-        # print('queue 开始大小 %d' % queue.qsize())
+            # print('queue 开始大小 %d' % queue.qsize())
 
-        # 异步进程池(非阻塞)
-        pool = multiprocessing.Pool(pool_size)
-        for index in range(queue.qsize()):
-            pool.apply_async(process_one, args=(queue,))
-            # time.sleep(1)
-        pool.close()
-        pool.join()
-        queue.join()
+            # 异步进程池(非阻塞)
+            pool = multiprocessing.Pool(pool_size)
+            for index in range(queue.qsize()):
+                pool.apply_async(process_one, args=(queue,))
+                # time.sleep(1)
+            pool.close()
+            pool.join()
+            queue.join()
+        except Exception as e:
+            print('main fun err:', e)
+            continue
 
 
 def process_one(in_queue):
-    driver = control.get_driver()
-    driver.get(url)
-    control.change_address(driver, postal)
-    while in_queue.empty() is not True:
-        if driver.find_element_by_id('nav-search-label-id').get_attribute('textContent') != 'All':
-            print("all click select err")
-            Select(driver.find_element_by_id('searchDropdownBox')).select_by_visible_text('All Departments')
+    try:
+        driver = control.get_driver()
+        driver.get(url)
+        control.change_address(driver, postal)
+        while in_queue.empty() is not True:
+            if driver.find_element_by_id('nav-search-label-id').get_attribute('textContent') != 'All':
+                print("all click select err")
+                Select(driver.find_element_by_id('searchDropdownBox')).select_by_visible_text('All Departments')
 
-        keywords = in_queue.get()
-        # print(keywords)
-        control.search_keywords(driver, keywords)
+            keywords = in_queue.get()
+            # print(keywords)
+            control.search_keywords(driver, keywords)
 
-        parse_product.get_product_list(driver, keywords)
+            parse_product.get_product_list(driver, keywords)
 
-        # time.sleep(5)
-        # driver.close()
+            # time.sleep(5)
+            # driver.close()
 
-        in_queue.task_done()
+            in_queue.task_done()
+    except Exception as e:
+        print('process_one fun err:', e)
 
 
 if __name__ == "__main__":

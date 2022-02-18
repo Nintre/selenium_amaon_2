@@ -90,61 +90,69 @@ def parse_best_seller_in(driver, asin):
 
 
 def get_product_list(driver, keywords):
-    product_list = driver.find_elements_by_xpath('//div[@class="s-main-slot s-result-list s-search-results sg-row"]/div[@data-asin]')
-    # print(len(product_list))
-    asin_list = []
-    for asin in product_list:
-        asin = asin.get_attribute('data-asin')
-        if asin != '':
-            asin_list.append(asin)
-    # print(asin_list)
-    # print(len(asin_list))
-    rank = 1
-    for i in range(len(asin_list)):
-        item = get_dict_item(keywords, asin_list[i], driver)
-        time = str(datetime.datetime.now()).split('.')[0]
-        item['snapshot_date'] = time
-        if item['sponsored'] == '':
-            item['rank'] = rank
-            rank += 1
-        else:
-            item['rank'] = 0
-        # print(item)
+    try:
+        product_list = driver.find_elements_by_xpath(
+            '//div[@class="s-main-slot s-result-list s-search-results sg-row"]/div[@data-asin]')
+        # print(len(product_list))
+        asin_list = []
+        for asin in product_list:
+            asin = asin.get_attribute('data-asin')
+            if asin != '':
+                asin_list.append(asin)
+        # print(asin_list)
+        # print(len(asin_list))
+        rank = 1
+        for i in range(len(asin_list)):
+            item = get_dict_item(keywords, asin_list[i], driver)
+            time = str(datetime.datetime.now()).split('.')[0]
+            item['snapshot_date'] = time
+            if item['sponsored'] == '':
+                item['rank'] = rank
+                rank += 1
+            else:
+                item['rank'] = 0
+            # print(item)
 
-        # 存入5050 mysql下的parse_product表
-        # save_mysql.save_data(item)
+            # 存入5050 mysql下的parse_product表
+            # save_mysql.save_data(item)
 
-        # 存入clickhouse
-        save_clickhouse.save_clickhouse(item)
+            # 存入clickhouse
+            save_clickhouse.save_clickhouse(item)
+    except Exception as e:
+        print('get_product_list err:', e)
 
 
 def get_dict_item(keywords, asin, driver):
     item = {}
-    item['keywords'] = escape_string(keywords)
-    item['asin'] = asin
+    try:
+        item['keywords'] = escape_string(keywords)
+        item['asin'] = asin
 
-    title = parse_title(driver, asin)
-    item['title'] = escape_string(title)
+        title = parse_title(driver, asin)
+        item['title'] = escape_string(title)
 
-    image = parse_image(driver, asin)
-    item['image'] = escape_string(image)
+        image = parse_image(driver, asin)
+        item['image'] = escape_string(image)
 
-    stars = parse_stars(driver, asin)
-    item['stars'] = stars
+        stars = parse_stars(driver, asin)
+        item['stars'] = stars
 
-    ratings = parse_ratings(driver, asin)
-    item['ratings'] = ratings
+        ratings = parse_ratings(driver, asin)
+        item['ratings'] = ratings
 
-    price, currency = parse_price(driver, asin)
-    item['price'] = price
-    item['currency'] = currency
+        price, currency = parse_price(driver, asin)
+        item['price'] = price
+        item['currency'] = currency
 
-    sponsored = parse_sponsored(driver, asin)
-    item['sponsored'] = sponsored
+        sponsored = parse_sponsored(driver, asin)
+        item['sponsored'] = sponsored
 
-    best_seller_in = parse_best_seller_in(driver, asin)
-    item['best_seller_in'] = escape_string(best_seller_in)
-    return item
+        best_seller_in = parse_best_seller_in(driver, asin)
+        item['best_seller_in'] = escape_string(best_seller_in)
+        return item
+    except Exception as e:
+        print('get_dict_item', e)
+        return item
 
 
 # def get_tuple_item(keywords, asin, driver):
